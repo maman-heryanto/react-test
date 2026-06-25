@@ -1,4 +1,6 @@
-function Sidebar({ aktivMenu, setAktivMenu }) {
+import { supabase } from '../lib/supabase.js'
+
+function Sidebar({ aktivMenu, setAktivMenu, user }) {
   const menus = [
     { id: 'dashboard', label: 'Dashboard', icon: '🏠' },
     { id: 'profil', label: 'Profil', icon: '👤' },
@@ -26,7 +28,7 @@ function Sidebar({ aktivMenu, setAktivMenu }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <span style={{ fontSize: '24px' }}>⚛️</span>
           <span style={{ color: '#fff', fontWeight: '700', fontSize: '16px', letterSpacing: '0.5px' }}>
-            Belajar React
+            BRJS
           </span>
         </div>
       </div>
@@ -71,25 +73,36 @@ function Sidebar({ aktivMenu, setAktivMenu }) {
       </nav>
 
       {/* User info bawah */}
-      <div style={{
-        padding: '16px 20px',
-        borderTop: '1px solid rgba(255,255,255,0.08)',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '10px',
-      }}>
-        <div style={{
-          width: '32px', height: '32px', borderRadius: '50%',
-          background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          color: '#fff', fontWeight: '700', fontSize: '13px', flexShrink: 0,
-        }}>
-          U
+      <div style={{ padding: '12px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 8px 12px' }}>
+          <div style={{
+            width: '32px', height: '32px', borderRadius: '50%',
+            background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            color: '#fff', fontWeight: '700', fontSize: '13px', flexShrink: 0,
+          }}>
+            {user?.email?.[0].toUpperCase() || 'U'}
+          </div>
+          <div style={{ overflow: 'hidden' }}>
+            <p style={{ color: '#fff', fontSize: '12px', fontWeight: '600', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {user?.email || 'User'}
+            </p>
+            <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '11px', margin: 0 }}>Admin</p>
+          </div>
         </div>
-        <div>
-          <p style={{ color: '#fff', fontSize: '13px', fontWeight: '600', margin: 0 }}>User</p>
-          <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '11px', margin: 0 }}>Admin</p>
-        </div>
+        <button
+          onClick={() => {
+            sessionStorage.setItem('just_logged_out', '1')
+            supabase.auth.signOut()
+          }}
+          style={{
+            width: '100%', padding: '8px', borderRadius: '8px', border: 'none',
+            background: 'rgba(239,68,68,0.15)', color: '#f87171',
+            fontSize: '13px', fontWeight: '500', cursor: 'pointer',
+          }}
+        >
+          🚪 Keluar
+        </button>
       </div>
     </aside>
   )
