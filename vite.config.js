@@ -8,5 +8,5 @@ export default defineConfig({
     react(),
     babel({ presets: [reactCompilerPreset()] })
   ],
-  base: process.env.NODE_ENV === 'production' ? '/belajar-react/' : '/',
+  base: '/',
 })
