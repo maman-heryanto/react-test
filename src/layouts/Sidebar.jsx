@@ -3,10 +3,16 @@ import { supabase } from '../lib/supabase.js'
 function Sidebar({ aktivMenu, setAktivMenu, user, profile }) {
   const menus = [
     { id: 'dashboard', label: 'Dashboard', icon: '🏠' },
+    { id: 'kasir', label: 'Kasir', icon: '🧾' },
+    { id: 'transaksi', label: 'Transaksi', icon: '📊' },
+    { id: 'hutang', label: 'Kelola Hutang', icon: '💳' },
     { id: 'qris', label: 'QRIS Generator', icon: '📱' },
     { id: 'kontak', label: 'Kontak', icon: '📬' },
     { id: 'pengaturan', label: 'Pengaturan', icon: '⚙️' },
-    ...(profile?.role === 'admin' ? [{ id: 'manajemen_user', label: 'Manajemen User', icon: '👥' }] : []),
+    ...(profile?.role === 'admin' ? [
+      { id: 'produk', label: 'Produk', icon: '📦' },
+      { id: 'manajemen_user', label: 'Manajemen User', icon: '👥' },
+    ] : []),
   ]
 
   return (

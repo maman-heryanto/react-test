@@ -6,6 +6,10 @@ import Kontak from './pages/Kontak.jsx'
 import Pengaturan from './pages/Pengaturan.jsx'
 import QrisGenerate from './pages/QrisGenerate.jsx'
 import ManajemenUser from './pages/ManajemenUser.jsx'
+import Produk from './pages/Produk.jsx'
+import Kasir from './pages/Kasir.jsx'
+import Transaksi from './pages/Transaksi.jsx'
+import Hutang from './pages/Hutang.jsx'
 import Login from './pages/Login.jsx'
 import Register from './pages/Register.jsx'
 import WaitingApproval from './pages/WaitingApproval.jsx'
@@ -35,6 +39,10 @@ function App() {
     kontak: <Kontak />,
     pengaturan: <Pengaturan />,
     manajemen_user: <ManajemenUser />,
+    produk: <Produk />,
+    kasir: <Kasir />,
+    transaksi: <Transaksi />,
+    hutang: <Hutang />,
   }
 
   if (loading) {
