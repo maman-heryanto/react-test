@@ -30,14 +30,14 @@ function Login() {
     if (error) {
       console.error('Login error:', error)
       if (error?.name === 'AuthRetryableFetchError') {
-        setError('Tidak dapat terhubung ke server. Supabase mungkin sedang pause — cek dashboard Supabase Anda.')
+        setError('Tidak dapat terhubung ke server. Cek koneksi internet Anda.')
       } else {
-        const pesan = error?.message || error?.toString() || 'Terjadi kesalahan yang tidak diketahui.'
+        const pesan = error?.message || error?.toString() || 'Terjadi kesalahan.'
         const terjemahan = {
           'Invalid login credentials': 'Email atau password salah.',
           'Email not confirmed': 'Email belum dikonfirmasi. Cek inbox Anda.',
           'Database error querying schema': 'Server sedang bermasalah. Coba beberapa saat lagi.',
-          'Failed to fetch': 'Tidak dapat terhubung ke server. Periksa koneksi internet.',
+          'Failed to fetch': 'Tidak dapat terhubung ke server.',
           'unexpected_failure': 'Terjadi kesalahan pada server. Coba lagi nanti.',
         }
         setError(terjemahan[pesan] || terjemahan[error?.code] || pesan)
@@ -46,86 +46,180 @@ function Login() {
     setLoading(false)
   }
 
-  const inputStyle = {
-    width: '100%', padding: '10px 12px', borderRadius: '8px',
-    border: '1px solid #d1d5db', fontSize: '14px',
-    boxSizing: 'border-box', outline: 'none',
-  }
-
   return (
     <>
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-      <div style={{
-        minHeight: '100vh', background: 'linear-gradient(135deg, #1e1e2e 0%, #2a2a3e 100%)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontFamily: 'system-ui, sans-serif',
-      }}>
-        <div style={{
-          background: '#fff', borderRadius: '16px', padding: '40px',
-          width: '100%', maxWidth: '380px', boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+
+      <style>{`
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-12px); }
+        }
+        .login-input:focus {
+          border-color: #6366f1 !important;
+          box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
+        }
+        .login-btn:hover:not(:disabled) {
+          transform: translateY(-1px);
+          box-shadow: 0 6px 20px rgba(99,102,241,0.4);
+        }
+        .login-btn { transition: all 0.2s ease; }
+        @media (max-width: 640px) {
+          .login-left { display: none !important; }
+        }
+      `}</style>
+
+      <div style={{ minHeight: '100vh', display: 'flex', fontFamily: 'system-ui, sans-serif' }}>
+
+        {/* Panel kiri — Branding */}
+        <div className="login-left" style={{
+          width: '440px', flexShrink: 0, position: 'relative', overflow: 'hidden',
+          background: 'linear-gradient(145deg, #0f0f1a 0%, #1e1b4b 50%, #0f0f1a 100%)',
+          display: 'flex', flexDirection: 'column', justifyContent: 'center',
+          padding: '60px 48px',
         }}>
-          <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-            <span style={{ fontSize: '40px' }}>⚛️</span>
-            <h1 style={{ fontSize: '20px', fontWeight: '700', margin: '8px 0 4px', color: '#111827' }}>
+          {/* Dekorasi lingkaran */}
+          <div style={{ position: 'absolute', top: '-80px', right: '-80px', width: '280px', height: '280px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(99,102,241,0.2) 0%, transparent 70%)' }} />
+          <div style={{ position: 'absolute', bottom: '-60px', left: '-60px', width: '220px', height: '220px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(139,92,246,0.15) 0%, transparent 70%)' }} />
+          <div style={{ position: 'absolute', top: '50%', right: '20px', width: '100px', height: '100px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(99,102,241,0.1) 0%, transparent 70%)' }} />
+
+          <div style={{ position: 'relative', zIndex: 1 }}>
+            {/* Logo */}
+            <div style={{ marginBottom: '32px' }}>
+              <span style={{ fontSize: '52px', display: 'block', animation: 'float 3s ease-in-out infinite' }}>⚛️</span>
+            </div>
+
+            <h1 style={{ color: '#fff', fontSize: '36px', fontWeight: '800', margin: '0 0 6px', letterSpacing: '-1px' }}>
               BRJS
             </h1>
-            <p style={{ color: '#6b7280', fontSize: '14px', margin: 0 }}>
-              Masuk ke akun Anda
+            <p style={{ color: '#818cf8', fontSize: '13px', fontWeight: '600', letterSpacing: '2px', margin: '0 0 20px', textTransform: 'uppercase' }}>
+              Belajar React JS
+            </p>
+            <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '14px', lineHeight: '1.7', margin: '0 0 40px', maxWidth: '280px' }}>
+              Platform belajar React modern dengan Supabase, Vite, dan tools terkini.
+            </p>
+
+            {/* Feature list */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {[
+                { icon: '⚡', label: 'React 19 + Vite' },
+                { icon: '🔐', label: 'Supabase Auth & Database' },
+                { icon: '📱', label: 'QRIS Generator' },
+              ].map(({ icon, label }) => (
+                <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{
+                    width: '32px', height: '32px', borderRadius: '8px',
+                    background: 'rgba(99,102,241,0.15)', border: '1px solid rgba(99,102,241,0.25)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: '15px', flexShrink: 0,
+                  }}>{icon}</div>
+                  <span style={{ color: 'rgba(255,255,255,0.65)', fontSize: '14px' }}>{label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Panel kanan — Form */}
+        <div style={{
+          flex: 1, display: 'flex', flexDirection: 'column',
+          alignItems: 'center', justifyContent: 'center',
+          background: '#f8fafc', padding: '40px 24px',
+        }}>
+          <div style={{ width: '100%', maxWidth: '360px' }}>
+
+            {/* Header form */}
+            <div style={{ marginBottom: '36px' }}>
+              <h2 style={{ fontSize: '26px', fontWeight: '800', color: '#111827', margin: '0 0 6px', letterSpacing: '-0.5px' }}>
+                Selamat datang 👋
+              </h2>
+              <p style={{ color: '#6b7280', fontSize: '14px', margin: 0 }}>
+                Masukkan akun Anda untuk melanjutkan
+              </p>
+            </div>
+
+            <form onSubmit={handleLogin}>
+              {/* Input Email */}
+              <div style={{ marginBottom: '18px' }}>
+                <label style={{ fontSize: '13px', fontWeight: '600', color: '#374151', display: 'block', marginBottom: '7px' }}>
+                  Alamat Email
+                </label>
+                <input
+                  className="login-input"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="nama@email.com"
+                  required
+                  style={{
+                    width: '100%', padding: '12px 14px', borderRadius: '10px',
+                    border: '1.5px solid #e5e7eb', fontSize: '14px',
+                    boxSizing: 'border-box', outline: 'none',
+                    background: '#fff', transition: 'border-color 0.2s',
+                    color: '#111827',
+                  }}
+                />
+              </div>
+
+              {/* Input Password */}
+              <div style={{ marginBottom: '24px' }}>
+                <label style={{ fontSize: '13px', fontWeight: '600', color: '#374151', display: 'block', marginBottom: '7px' }}>
+                  Password
+                </label>
+                <input
+                  className="login-input"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Masukkan password"
+                  required
+                  style={{
+                    width: '100%', padding: '12px 14px', borderRadius: '10px',
+                    border: '1.5px solid #e5e7eb', fontSize: '14px',
+                    boxSizing: 'border-box', outline: 'none',
+                    background: '#fff', transition: 'border-color 0.2s',
+                    color: '#111827',
+                  }}
+                />
+              </div>
+
+              {/* Error */}
+              {error && (
+                <div style={{
+                  background: '#fef2f2', border: '1px solid #fecaca',
+                  borderRadius: '10px', padding: '12px 14px', marginBottom: '18px',
+                  display: 'flex', alignItems: 'flex-start', gap: '10px',
+                }}>
+                  <span style={{ fontSize: '16px', flexShrink: 0 }}>⚠️</span>
+                  <p style={{ color: '#dc2626', fontSize: '13px', margin: 0, lineHeight: '1.5' }}>{error}</p>
+                </div>
+              )}
+
+              {/* Tombol masuk */}
+              <button
+                className="login-btn"
+                type="submit"
+                disabled={loading}
+                style={{
+                  width: '100%', padding: '13px', borderRadius: '10px', border: 'none',
+                  background: loading
+                    ? '#c7d2fe'
+                    : 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                  color: '#fff', fontWeight: '700', fontSize: '15px',
+                  cursor: loading ? 'not-allowed' : 'pointer',
+                  letterSpacing: '0.2px',
+                }}
+              >
+                {loading ? '⏳ Sedang masuk...' : 'Masuk →'}
+              </button>
+            </form>
+
+            <p style={{ textAlign: 'center', color: '#d1d5db', fontSize: '12px', marginTop: '32px' }}>
+              © 2026 BRJS · Dibuat untuk belajar React
             </p>
           </div>
-
-          <form onSubmit={handleLogin}>
-            <div style={{ marginBottom: '16px' }}>
-              <label style={{ fontSize: '13px', fontWeight: '500', color: '#374151', display: 'block', marginBottom: '6px' }}>
-                Email
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="email@contoh.com"
-                required
-                style={inputStyle}
-              />
-            </div>
-
-            <div style={{ marginBottom: '24px' }}>
-              <label style={{ fontSize: '13px', fontWeight: '500', color: '#374151', display: 'block', marginBottom: '6px' }}>
-                Password
-              </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                required
-                style={inputStyle}
-              />
-            </div>
-
-            {error && (
-              <div style={{
-                background: '#fef2f2', border: '1px solid #fecaca',
-                borderRadius: '8px', padding: '10px 12px', marginBottom: '16px',
-              }}>
-                <p style={{ color: '#dc2626', fontSize: '13px', margin: 0 }}>❌ {error}</p>
-              </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={loading}
-              style={{
-                width: '100%', padding: '11px', borderRadius: '8px', border: 'none',
-                background: loading ? '#a5b4fc' : '#6366f1',
-                color: '#fff', fontWeight: '600', fontSize: '15px',
-                cursor: loading ? 'not-allowed' : 'pointer',
-              }}
-            >
-              {loading ? 'Masuk...' : 'Masuk'}
-            </button>
-          </form>
         </div>
+
       </div>
     </>
   )
