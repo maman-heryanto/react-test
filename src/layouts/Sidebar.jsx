@@ -3,7 +3,6 @@ import { supabase } from '../lib/supabase.js'
 function Sidebar({ aktivMenu, setAktivMenu, user, profile }) {
   const menus = [
     { id: 'dashboard', label: 'Dashboard', icon: '🏠' },
-    { id: 'profil', label: 'Profil', icon: '👤' },
     { id: 'qris', label: 'QRIS Generator', icon: '📱' },
     { id: 'kontak', label: 'Kontak', icon: '📬' },
     { id: 'pengaturan', label: 'Pengaturan', icon: '⚙️' },
@@ -75,7 +74,16 @@ function Sidebar({ aktivMenu, setAktivMenu, user, profile }) {
 
       {/* User info bawah */}
       <div style={{ padding: '12px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 8px 12px' }}>
+        <button
+          onClick={() => setAktivMenu('profil')}
+          style={{
+            display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 8px 12px',
+            background: 'none', border: 'none', cursor: 'pointer', width: '100%',
+            borderRadius: '8px', transition: 'background 0.15s',
+          }}
+          onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.06)'}
+          onMouseLeave={e => e.currentTarget.style.background = 'none'}
+        >
           <div style={{
             width: '32px', height: '32px', borderRadius: '50%',
             background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
@@ -84,13 +92,14 @@ function Sidebar({ aktivMenu, setAktivMenu, user, profile }) {
           }}>
             {user?.email?.[0].toUpperCase() || 'U'}
           </div>
-          <div style={{ overflow: 'hidden' }}>
+          <div style={{ overflow: 'hidden', textAlign: 'left', flex: 1 }}>
             <p style={{ color: '#fff', fontSize: '12px', fontWeight: '600', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
               {user?.email || 'User'}
             </p>
-            <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '11px', margin: 0 }}>Admin</p>
+            <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '11px', margin: 0 }}>{profile?.role === 'admin' ? 'Administrator' : 'User'}</p>
           </div>
-        </div>
+          <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '12px', flexShrink: 0 }}>›</span>
+        </button>
         <button
           onClick={() => {
             sessionStorage.setItem('just_logged_out', '1')
