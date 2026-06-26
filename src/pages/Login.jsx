@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import Toast from '../components/Toast'
 
-function Login() {
+function Login({ onShowRegister }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -214,7 +214,15 @@ function Login() {
               </button>
             </form>
 
-            <p style={{ textAlign: 'center', color: '#d1d5db', fontSize: '12px', marginTop: '32px' }}>
+            <p style={{ textAlign: 'center', marginTop: '20px', fontSize: '13px', color: '#6b7280' }}>
+              Belum punya akun?{' '}
+              <button onClick={onShowRegister}
+                style={{ background: 'none', border: 'none', color: '#6366f1', fontWeight: '600', cursor: 'pointer', fontSize: '13px' }}>
+                Daftar di sini
+              </button>
+            </p>
+
+            <p style={{ textAlign: 'center', color: '#d1d5db', fontSize: '12px', marginTop: '12px' }}>
               © 2026 BRJS · Dibuat untuk belajar React
             </p>
           </div>

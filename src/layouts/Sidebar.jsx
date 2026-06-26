@@ -1,12 +1,13 @@
 import { supabase } from '../lib/supabase.js'
 
-function Sidebar({ aktivMenu, setAktivMenu, user }) {
+function Sidebar({ aktivMenu, setAktivMenu, user, profile }) {
   const menus = [
     { id: 'dashboard', label: 'Dashboard', icon: '🏠' },
     { id: 'profil', label: 'Profil', icon: '👤' },
     { id: 'qris', label: 'QRIS Generator', icon: '📱' },
     { id: 'kontak', label: 'Kontak', icon: '📬' },
     { id: 'pengaturan', label: 'Pengaturan', icon: '⚙️' },
+    ...(profile?.role === 'admin' ? [{ id: 'manajemen_user', label: 'Manajemen User', icon: '👥' }] : []),
   ]
 
   return (

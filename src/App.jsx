@@ -5,21 +5,17 @@ import Profil from './pages/Profil.jsx'
 import Kontak from './pages/Kontak.jsx'
 import Pengaturan from './pages/Pengaturan.jsx'
 import QrisGenerate from './pages/QrisGenerate.jsx'
+import ManajemenUser from './pages/ManajemenUser.jsx'
 import Login from './pages/Login.jsx'
+import Register from './pages/Register.jsx'
+import WaitingApproval from './pages/WaitingApproval.jsx'
 import Toast from './components/Toast.jsx'
 import { useAuth } from './hooks/useAuth.js'
 
-const halamanAktif = {
-  dashboard: <Dashboard />,
-  profil: <Profil />,
-  qris: <QrisGenerate />,
-  kontak: <Kontak />,
-  pengaturan: <Pengaturan />,
-}
-
 function App() {
   const [aktivMenu, setAktivMenu] = useState('dashboard')
-  const { user, loading } = useAuth()
+  const [showRegister, setShowRegister] = useState(false)
+  const { user, profile, loading } = useAuth()
   const [toast, setToast] = useState(null)
 
   useEffect(() => {
@@ -32,6 +28,15 @@ function App() {
     }
   }, [user])
 
+  const halamanAktif = {
+    dashboard: <Dashboard />,
+    profil: <Profil />,
+    qris: <QrisGenerate />,
+    kontak: <Kontak />,
+    pengaturan: <Pengaturan />,
+    manajemen_user: <ManajemenUser />,
+  }
+
   if (loading) {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#1e1e2e' }}>
@@ -40,12 +45,20 @@ function App() {
     )
   }
 
-  if (!user) return <Login />
+  if (!user) {
+    return showRegister
+      ? <Register onBackToLogin={() => setShowRegister(false)} />
+      : <Login onShowRegister={() => setShowRegister(true)} />
+  }
+
+  if (!profile || profile.status === 'pending' || profile.status === 'rejected') {
+    return <WaitingApproval user={user} status={profile?.status || 'pending'} />
+  }
 
   return (
     <>
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-      <DashboardLayout aktivMenu={aktivMenu} setAktivMenu={setAktivMenu} user={user}>
+      <DashboardLayout aktivMenu={aktivMenu} setAktivMenu={setAktivMenu} user={user} profile={profile}>
         {halamanAktif[aktivMenu]}
       </DashboardLayout>
     </>

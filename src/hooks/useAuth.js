@@ -3,22 +3,35 @@ import { supabase } from '../lib/supabase'
 
 export function useAuth() {
   const [user, setUser] = useState(null)
+  const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
 
+  async function fetchProfile(userId) {
+    const { data } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .maybeSingle()
+    setProfile(data)
+  }
+
   useEffect(() => {
-    // cek session saat pertama load
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null)
+      const u = session?.user ?? null
+      setUser(u)
+      if (u) fetchProfile(u.id)
       setLoading(false)
     })
 
-    // pantau perubahan status login/logout
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null)
+      const u = session?.user ?? null
+      setUser(u)
+      if (u) fetchProfile(u.id)
+      else setProfile(null)
     })
 
     return () => subscription.unsubscribe()
   }, [])
 
-  return { user, loading }
+  return { user, profile, loading }
 }
