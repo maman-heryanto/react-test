@@ -1,5 +1,7 @@
 import { useState, useRef } from 'react'
 import { QRCodeCanvas } from 'qrcode.react'
+import { supabase } from '../lib/supabase'
+import { useAuth } from '../hooks/useAuth'
 
 const API_URL = import.meta.env.VITE_QRIS_API_URL
 
@@ -13,6 +15,7 @@ function ambilQrisString(json) {
 }
 
 function QrisGenerate() {
+  const { user } = useAuth()
   const [mode, setMode] = useState('json')
   const [form, setForm] = useState(defaultForm)
   const [file, setFile] = useState(null)
@@ -77,6 +80,13 @@ function QrisGenerate() {
       const qs = ambilQrisString(json)
       if (qs) {
         setQrisString(qs)
+        await supabase.from('qris_history').insert({
+          user_id: user?.id,
+          nominal: Number(form.amount),
+          merchant_name: json.merchantName || null,
+          merchant_city: json.merchantCity || null,
+          qris_string: qs,
+        })
       } else {
         setError('QRIS string tidak ditemukan di response. Lihat raw JSON di bawah untuk cek field-nya.')
       }
